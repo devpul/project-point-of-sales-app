@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="flex justify-center min-h-screen items-center">
-        <div class="bg-blue-500 p-5">
+        <div class="p-5 shadow-xl">
             @yield('content')
         </div>
     </div>
