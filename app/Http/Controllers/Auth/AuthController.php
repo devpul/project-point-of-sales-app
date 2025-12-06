@@ -30,19 +30,9 @@ class AuthController extends Controller
             }
 
         } catch (ValidationException $e) {
-            $errors = $e->errors();
-            return back()->with('error', $errors);
+            $error = $e->validator->errors();
+            return back()->with('error', $error->first());
         }
-    }
-
-    public function indexRegister()
-    {
-        return view('auth.register');
-    }
-
-    public function indexLogin()
-    {
-        return view('auth.login');
     }
 
     public function storeLogin(Request $request)
@@ -68,6 +58,26 @@ class AuthController extends Controller
         // catat log
         activity_log('user logged in.', $userId);
 
-        return redirect()->route('login.index')->with('success', 'Anda Berhasil Login.');
+        return redirect()->route('dashboard.index')->with('success', 'Anda Berhasil Login.');
+    }
+
+    public function storeLogout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login')->with('success', 'Anda berhasil log out.');
+    }
+
+    public function indexRegister()
+    {
+        return view('auth.register');
+    }
+
+    public function indexLogin()
+    {
+        return view('auth.login');
     }
 }
