@@ -29,7 +29,7 @@
             <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
                 Transaksi Pembelian
             </li>
-            <a href="{{ route('transaksi.index') }}">
+            <a href="{{ route('penjualan.index') }}">
                 <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
                     Transaksi Penjualan
                 </li>

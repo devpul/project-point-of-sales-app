@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Transaksi;
 
+use App\Models\ProductStock;
+use App\Models\SaleItems;
 use App\Models\Sales;
 use App\Models\Products;
 use Illuminate\Http\Request;
@@ -27,6 +29,8 @@ class TransaksiController extends Controller
                 'status'            =>  'required|in:pending,paid,cancel,refund',
                 'receipt_method'    =>  'required|in:print,email',
                 'description'       =>  'nullable|string',
+
+                'qty'               =>  'required|string',
             ];
 
             $rules_update = [];
@@ -53,8 +57,6 @@ class TransaksiController extends Controller
         if (! is_array($validated)) return $validated;
         
 
-        // $total_amount =
-
         $sale = Sales::create([
             'user_id'           =>  Auth::user()->id,
             'invoice_code'      =>  str_pad('INV ', 4, '0000', STR_PAD_LEFT),
@@ -69,18 +71,35 @@ class TransaksiController extends Controller
             'receipt_method'    =>  $validated['invoice_code'],
             'description'       =>  $validated['invoice_code'],
         ]);
+
+        $total = $validated['price'] * $validated['qty'];
+
+        $item = SaleItems::create([
+            'sale_id'       =>  $sale->id,
+            'product_id'    =>  $validated['product_id'],
+            'qty'           =>  $validated['qty'],
+            'price'         =>  $validated['price'],
+            'total'         =>  $total
+        ]);
+
+        // kurangi qty
+        // ProductStock::where('product_id', $validated['product_id'])
+        //             ->decrement('qty', $validated['qty']);
+        
     }
 
     public function index()
     {
-        $products = Products::distinct()->orderBy('name')->get();
-        if ($products->isEmpty()) return back()->with('error', 'Produk tidak ditemukan.');
-        
-        return view('Transaksi.index', compact('products'));
+        $sales = Sales::with('sale_item')->orderBy('created_at')->get();
+
+        return view('Transaksi.index', compact('sales'));
     }
 
     public function create()
     {
+        $products = Products::distinct()->orderBy('name')->get();
+        if ($products->isEmpty()) return back()->with('error', 'Produk tidak ditemukan.');
         
+        return view('Transaksi.create', compact('products'));
     }
 }

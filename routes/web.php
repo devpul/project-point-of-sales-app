@@ -27,6 +27,7 @@ Route::middleware('auth')->prefix('products')->group(function() {
 });
 
 Route::middleware('auth')->prefix('sales')->group(function() {
-    Route::post('/', [TransaksiController::class, 'store'])->name('penjualan.store');
     Route::get('/', [TransaksiController::class, 'index'])->name('penjualan.index');
+    Route::get('/create', [TransaksiController::class, 'create'])->name('penjualan.create');
+    Route::post('/store', [TransaksiController::class, 'store'])->name('penjualan.store');
 });
