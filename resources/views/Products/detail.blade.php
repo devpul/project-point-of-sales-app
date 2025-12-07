@@ -11,9 +11,23 @@
         
         <div class="shadow p-5 space-y-5">
             @if ($product->image)
-                <img src="{{ asset('storage/products/' . $product->image) }}"
-                class="object-cover h-[350px] w-[350px">
+                <img src="{{ asset('storage/' . $product->image) }}"
+                class="object-cover h-[350px] w-[350px] mx-auto">
             @endif
+
+            <div class="flex justify-center gap-x-2 items-center">
+                @forelse ($product->product_image as $additionalImage)
+                    <img src="{{ asset('storage/' . $additionalImage->filename) }}"
+                    class="h-[100px] w-[100px] flex justify-center items-center object-cover p-1 shadow ">
+                @empty
+                    @for ($i = 1; $i <= 4; $i++)
+                        <div class="h-[100px] w-[100px] object-cover p-1 shadow flex justify-center items-center">
+                            <p>➕</p>
+                        </div>
+                    @endfor
+                @endforelse
+            </div>
+            
 
             <h2 class="text-4xl font-bold">{{ $product->name }}</h2>
 
