@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\ProductStock;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +20,27 @@ class ProductController extends Controller
         try {
 
             $rules_store = [
+                // tbl products
                 'name'                =>  'required|array',
-                'image'               =>  'required|array',
-
                 'name.*'              =>  'required|string|min:3|regex:/^[A-Za-z ]+$/',
-                'image.*'             =>  'required|image|mimes:jpg,png,jpeg,webp|max:2048'
+                'image'               =>  'required|array',
+                'image.*'             =>  'required|image|mimes:jpg,png,jpeg,webp|max:2048',
+
+                // tbl product_images & tbl product_stocks
+                // 'product_id'          =>  'sometimes',
+
+                // tbl product_images
+                'filename'            =>  'sometimes|array',
+                'filename.*'          =>  'sometimes|image|mimes:jpg,png,jpeg,web|max:1048',
+                
+                // tbl product_stocks
+                // 'stock_id'            =>  'required|exists:stocks,id',
+                // 'qty'                 =>  'required|integer|min:1',
+                
+                // tbl stocks
+                // 'unit'                =>  'required|integer|min:1',
+                // warehouse_id
+                //current_stock
             ];
 
             $rules_update = [
@@ -51,6 +70,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $role_manager = Auth::user()->role === 'manager';
         if ($role_manager) return back()->with('error', 'Akses ditolak.');
 
@@ -58,15 +79,44 @@ class ProductController extends Controller
         if (! is_array($validated)) return $validated;
 
         foreach ($validated['name'] as $index => $product_name) {
+            // tbl products
             $image = $validated['image'][$index];
-            $path = $image->store('products', 'public');
-            $imageName = basename($path);
+            $pathMainImage = $image->store('products', 'public');
 
-            Products::create([
+            $product = Products::create([
                 'name'  =>  $product_name,
-                'image' => $imageName
+                'image' => $pathMainImage
             ]);
+            
+            // tbl product_images
+            if ($request->file('filename')) {
+
+                foreach ($request->file('filename') as $additionalImage) {
+                    $pathAdditionalImages = $additionalImage->store('products','public');
+
+                    ProductImages::create([
+                        'product_id'    => $product->id,
+                        'filename'      => $pathAdditionalImages
+                    ]);
+                }
+                
+            }
         }
+
+        // tbl product_stocks
+        // ProductStock::create([
+        //     'product_id'    =>  $product->id,
+        //     // stock_id
+        //     'qty'           =>  $validated['qty']
+        // ]);
+
+        // tbl stocks
+        // Stock::create([
+        //     'name'          =>  $validated['name'],
+        //     'unit'          =>  'pcs',
+        //     // 'warehouse_id
+        //     'current_stock' =>  $validated['qty']
+        // ]);
 
         return redirect()->route('product.index')->with('success', 'Produk baru berhasil dibuat.');
     }
@@ -85,8 +135,14 @@ class ProductController extends Controller
             Storage::disk('public')->delete('products/'. $product->image);
         }
 
-        $product->delete();
+        $product_image = ProductImages::where('product_id', $id)->first();
+        if ($product_image && Storage::disk('public')->exists('products/' . $product_image->filename)) {
+            Storage::disk('public')->delete('products/' . $product_image->filename);        
+            $product_image->delete();
+        }
 
+        $product->delete();
+        
         return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus.');
     }
 
@@ -108,7 +164,7 @@ class ProductController extends Controller
 
     public function detail($id)
     {
-        $product = Products::find($id);
+        $product = Products::with('product_image')->find($id);
         if (!$product) return back()->with('error', 'Produk tidak ditemukan.');
 
         return view('Products.detail', ['product' => $product]);

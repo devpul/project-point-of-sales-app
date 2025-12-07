@@ -13,7 +13,7 @@
                 <a href="{{ route('product.detail', $product->id) }}" class="cursor-pointer p-5 text-center shadow transform duration-300 hover:scale-105">
                     <div class="flex flex-col  ">
                         @if ($product->image)
-                            <img src="{{ asset('storage/products/' . $product->image)  }}"
+                            <img src="{{ asset('storage/' . $product->image)  }}"
                             class="object-center object-cover w-[200px] h-[200px] mx-auto">
                         @endif
                         
