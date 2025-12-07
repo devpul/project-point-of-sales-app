@@ -16,7 +16,6 @@
                     class="border focus:border-blue-500 outline-none px-3 py-1">
                     <p id="toggleAdd" class="font-semibold bg-yellow-500 px-3 py-1 cursor-pointer">Add</p>
                 </div>
-
                 @error('name.*')
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
@@ -26,6 +25,8 @@
                 @error('image.*')
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
+
+                
             </div>
 
             <div class="text-center">

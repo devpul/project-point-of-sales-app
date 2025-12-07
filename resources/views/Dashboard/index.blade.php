@@ -15,18 +15,31 @@
             </h2>
         </div>
 
-        <ul class="flex flex-col gap-y-3">
+        <ul class="flex flex-col gap-y-3 mt-10 p-5 rounded-2xl shadow">
+            <h1 class="font-bold text-center border-b-yellow-500 border-b">LIST FEATURES</h1>
             <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
                 <a href="{{ route('product.index') }}">Manajemen Produk</a>
             </li>
             <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
-                Product
+                Management Kategori
             </li>
             <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
-                Product
+                Shift Management
             </li>
             <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
-                Product
+                Transaksi Pembelian
+            </li>
+            <a href="">
+                <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
+                    Transaksi Penjualan
+                </li>
+            </a>
+            
+            <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
+                Inventaris Multi Gudang
+            </li>
+            <li class="px-3 py-1 rounded shadow cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
+                <a href="">Pin Akses Kasir</a>
             </li>
         </ul>
     </div>

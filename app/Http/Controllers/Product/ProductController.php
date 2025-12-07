@@ -6,8 +6,9 @@ use App\Models\Products;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 use function PHPUnit\Framework\returnArgument;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -75,9 +76,18 @@ class ProductController extends Controller
         // write your code here ...
     }
 
-    public function destroy()
+    public function destroy($id)
     {
-        // write your code here ...
+        $product = Products::find($id);
+        if (!$product) return back()->with('error', 'Produk tidak ditemukan.');
+        
+        if ($product->image && Storage::disk('public')->exists('products/' . $product->image)) {
+            Storage::disk('public')->delete('products/'. $product->image);
+        }
+
+        $product->delete();
+
+        return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus.');
     }
 
     public function index()
@@ -94,5 +104,13 @@ class ProductController extends Controller
     public function edit()
     {
         return view('Products.edit');
+    }
+
+    public function detail($id)
+    {
+        $product = Products::find($id);
+        if (!$product) return back()->with('error', 'Produk tidak ditemukan.');
+
+        return view('Products.detail', ['product' => $product]);
     }
 }
