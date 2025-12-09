@@ -9,16 +9,33 @@
         class="flex flex-col gap-y-5 p-2 items-center bg-blue-500">
             @csrf
 
-            <div class="input-group flex justify-between w-full">
-                <label for="">Product ID</label>
-                <select name="product_id">
-                    @forelse ($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name . ' - ' . $product->price }}</option>
-                    @empty
-                        <p>Belum ada produk.</p>
-                    @endforelse
-                </select>
+            <div id="input-group" class="flex flex-col gap-y-2 justify-between">
+                <div id="objectsTarget" class="flex flex-col gap-y-2">
+                    <div class="input-group flex justify-between w-full">
+                        <label for="">Product ID</label>
+                        <select name="items[0][product_id]">
+                            @forelse ($products as $product)
+                                <option value="{{ $product->id }}">{{ $product->name . ' - ' . $product->price }}</option>
+                            @empty
+                                <p>Belum ada produk.</p>
+                            @endforelse
+                        </select>
+                    </div>
+
+                    <div class="input-group flex justify-between w-full">
+                        <label>Quantity</label>
+                        <input type="number" name="items[0][qty]" min="1" max="10" required
+                        class="border text-center">
+                    </div>
+                </div>
+
+                <p id="toggleAdd" class="text-white font-bold bg-yellow-500 py-1 px-3">
+                    Add
+                </p>
             </div>
+            
+            
+            
             
             {{-- invoice code otomatis --}}
             
@@ -68,11 +85,7 @@
                 </select> 
             </div>
 
-            <div class="input-group flex justify-between w-full">
-                <label>Quantity</label>
-                <input type="number" name="qty" min="1" max="10" required
-                class="border text-center">
-            </div>
+           
 
             {{-- <div class="input-group flex justify-between w-full">
                 <label>Price</label>
@@ -103,4 +116,40 @@
             <button type="submit" class="bg-green-500 text-white font-semibold py-1 px-3 rounded">buy</button>
         </form>
     </div>
+
+
+    <script>
+    let index = 1;
+
+    const toggleAdd = document.getElementById('toggleAdd');
+    const inputGroup = document.getElementById('input-group');
+    const firstGroup = document.getElementById('objectsTarget');
+
+    console.log("Script loaded");
+
+    toggleAdd.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log("Add clicked");
+
+        const clone = firstGroup.cloneNode(true);
+        console.log("Clone:", clone);
+
+        clone.querySelectorAll('select, input').forEach(el => {
+            const oldName = el.getAttribute('name');
+            const newName = oldName.replace(/\[\d+\]/, `[${index}]`);
+
+            console.log("Old:", oldName, " -> New:", newName);
+
+            el.setAttribute('name', newName);
+            if (el.tagName === "INPUT") el.value = "";
+        });
+
+        inputGroup.appendChild(clone);
+        console.log("Berhasil append clone");
+
+        index++;
+        console.log("Index updated:", index);
+    });
+</script>
+
 @endsection 
