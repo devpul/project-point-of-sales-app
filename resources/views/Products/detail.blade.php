@@ -11,8 +11,8 @@
         
         <div class="shadow p-5 space-y-5">
             @if ($product->image)
-                <img src="{{ asset('storage/products/' . $product->image) }}"
-                class="object-cover h-[350px] w-[350px">
+                <img src="{{ asset('storage/' . $product->image) }}"
+                class="object-cover h-[350px] w-[350px]">
             @endif
 
             <h2 class="text-4xl font-bold">{{ $product->name }}</h2>
