@@ -81,11 +81,11 @@ class ProductController extends Controller
         foreach ($validated['name'] as $index => $product_name) {
             // tbl products
             $image = $validated['image'][$index];
-            $pathMainImage = $image->store('products', 'public');
+            $imageName = $image->store('products', 'public');
 
             $product = Products::create([
                 'name'  =>  $product_name,
-                'image' => $pathMainImage
+                'image' => 'products/' . $imageName
             ]);
             
             // tbl product_images

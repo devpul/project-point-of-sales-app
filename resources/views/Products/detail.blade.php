@@ -12,7 +12,7 @@
         <div class="shadow p-5 space-y-5">
             @if ($product->image)
                 <img src="{{ asset('storage/' . $product->image) }}"
-                class="object-cover h-[350px] w-[350px] mx-auto">
+                class="object-cover h-[350px] w-[350px]">
             @endif
 
             <div class="flex justify-center gap-x-2 items-center">
